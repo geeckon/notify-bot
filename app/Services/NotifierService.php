@@ -28,7 +28,7 @@ class NotifierService extends Service
             $notifications = Notification::where('sent', false)->whereDate('notify_at', Carbon::tomorrow())->get();
 
             foreach ($notifications as $notification) {
-                $message = $notification->nick . ", Tev šodien ir vokālā nodarbība!";
+                $message = $notification->nick . ", Tev rīt ir vokālā nodarbība!";
                 if ($notification->time_slot) {
                     $message .= "\nLaiks: " . $notification->time_slot;
                 }
