@@ -182,6 +182,5 @@ return [
         //
     ],
 
-    'guildId' => env('DISCORD_GUILD_ID', ''),
 
 ];
