@@ -65,7 +65,7 @@ class ListCommand extends SlashCommand
      */
     public function handle($interaction)
     {
-        $notifications = Notification::whereNot('sent')->orderBy('notify_at', 'asc')->get();
+        $notifications = Notification::where('sent', false)->orderBy('notify_at', 'asc')->get();
 
         $messages = $notifications->map(function ($notification) {
             $message = $notification->nick . " " . $notification->notify_at->toDateString();
