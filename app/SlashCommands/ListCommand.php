@@ -71,9 +71,10 @@ class ListCommand extends SlashCommand
         $lastDate = "";
 
         foreach ($notifications as $notification) {
+            $message .= "\n";
             $date = $notification->notify_at->toDateString();
             if ($date != $lastDate) {
-                $message .= "\t$date\n";
+                $message .= "\n\t$date\n";
                 $lastDate = $date;
             }
 
