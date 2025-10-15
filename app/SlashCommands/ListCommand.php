@@ -67,20 +67,27 @@ class ListCommand extends SlashCommand
     {
         $notifications = Notification::where('sent', false)->orderBy('notify_at', 'asc')->get();
 
-        $messages = $notifications->map(function ($notification) {
-            $message = $notification->nick . " " . $notification->notify_at->toDateString();
+        $message = "";
+        $lastDate = "";
+
+        foreach ($notifications as $notification) {
+            $date = $notification->notify_at->toDateString();
+            if ($date != $lastDate) {
+                $message .= "\t$date\n";
+                $lastDate = $date;
+            }
+
+            $message .= $notification->nick;
             if ($notification->time_slot) {
                 $message .=  " " . $notification->time_slot;
             }
-
-            return $message;
-        });
+        }
 
         $interaction->respondWithMessage(
             $this
                 ->message()
                 ->title('List Command')
-                ->content(implode("\n", $messages->all()))
+                ->content($message)
                 ->build()
         );
     }
