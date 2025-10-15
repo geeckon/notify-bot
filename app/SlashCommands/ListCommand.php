@@ -67,14 +67,14 @@ class ListCommand extends SlashCommand
     {
         $notifications = Notification::whereNot('sent')->orderBy('notify_at', 'asc')->get();
 
-        $messages = array_map(function($notification) {
+        $messages = $notifications->map(function ($notification) {
             $message = $notification->nick . " " . $notification->notify_at->toDateString();
             if ($notification->time_slot) {
                 $message .=  " " . $notification->time_slot;
             }
 
             return $message;
-        }, $notifications);
+        });
 
         $interaction->respondWithMessage(
             $this
