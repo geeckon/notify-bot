@@ -80,7 +80,7 @@ class ListCommand extends SlashCommand
             $this
                 ->message()
                 ->title('List Command')
-                ->content(implode("\n", $messages))
+                ->content($messages-implode("\n"))
                 ->build()
         );
     }
