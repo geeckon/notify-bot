@@ -49,6 +49,12 @@ class NotifyCommand extends SlashCommand
             'type' => Option::STRING,
             'required' => false,
         ],
+        [
+            'name' => 'teacher',
+            'description' => 'Pedagogs, pie kā ir nodarbība',
+            'type' => Option::STRING,
+            'required' => false,
+        ],
     ];
 
     /**
@@ -108,9 +114,11 @@ class NotifyCommand extends SlashCommand
         $notification->nick = $this->discord()->guilds->first()->members->get('id', $this->value('user'));
         $notification->notify_at = $timestamp;
         $notification->time_slot = $this->value('time');
+        $notification->teacher = $this->value('teacher') ?? 'Edgars';
         $notification->save();
 
-        $message = "Saglabāta notifikācija lietotājam $notification->nick\nDatums: " . $notification->notify_at->toDateString();
+        $message = "Saglabāta notifikācija lietotājam $notification->nick\nPedagogs: "
+            . $notification->teacher . "\nDatums: " . $notification->notify_at->toDateString();
         if ($notification->time_slot) {
             $message .= "\nLaiks: " . $notification->time_slot;
         }
