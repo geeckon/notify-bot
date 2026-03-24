@@ -78,7 +78,7 @@ class ListCommand extends SlashCommand
                 $lastDate = $date;
             }
 
-            $message .= $notification->nick;
+            $message .= $notification->nick . " " . $notification->teacher;
             if ($notification->time_slot) {
                 $message .=  " " . $notification->time_slot;
             }
