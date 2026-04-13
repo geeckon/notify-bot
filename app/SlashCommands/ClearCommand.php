@@ -100,6 +100,8 @@ class ClearCommand extends SlashCommand
                     ->content("Failed to parse timestamp")
                     ->build()
             );
+
+            return;
         }
 
         $notification = Notification::where('user_id', $this->value('user'))

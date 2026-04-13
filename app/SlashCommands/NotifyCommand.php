@@ -107,6 +107,8 @@ class NotifyCommand extends SlashCommand
                     ->content("Failed to parse timestamp")
                     ->build()
             );
+
+            return;
         }
 
         $notification = new Notification();
