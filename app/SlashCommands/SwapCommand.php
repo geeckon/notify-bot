@@ -126,18 +126,24 @@ class SwapCommand extends SlashCommand
         $notifications[] = Notification::where([
             ['sent', false],
             ['nick', $nicks[0]],
-            ['notify_at', $timestamps[0]],
-        ])->first();
+        ])->whereDate('notify_at', $timestamps[0])->first();
         $notifications[] = Notification::where([
             ['sent', false],
             ['nick', $nicks[1]],
-            ['notify_at', $timestamps[1]],
-        ])->first();
+        ])->whereDate('notify_at', $timestamps[1])->first();
 
-        if ($notifications[0] && $notifications[1]) {
-            $notifications[0]->nick = $nicks[1];
-            $notifications[1]->nick = $nicks[0];
+        if (!($notifications[0] && $notifications[1])) {
+            $interaction->respondWithMessage(
+                $this
+                    ->message()
+                    ->title('Notify Command')
+                    ->content("Didn't find both notifications to swap")
+                    ->build()
+            );
         }
+
+        $notifications[0]->nick = $nicks[1];
+        $notifications[1]->nick = $nicks[0];
 
         $message = "Samainītas notifikācijas. Jaunās notifikācijas:" .
             "\n\nLietotājam {$notifications[0]->nick}\nPedagogs: "
