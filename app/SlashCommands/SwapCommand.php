@@ -3,6 +3,7 @@
 namespace App\SlashCommands;
 
 use App\Models\Notification;
+use Carbon\Carbon;
 use Discord\Parts\Interactions\Command\Option;
 use Discord\Parts\Interactions\Interaction;
 use Laracord\Commands\SlashCommand;
@@ -36,9 +37,21 @@ class SwapCommand extends SlashCommand
             'required' => true,
         ],
         [
+            'name' => 'date1',
+            'description' => 'Datums 1. Formāts: DD.MM (piemēram, 17.02)',
+            'type' => Option::STRING,
+            'required' => true,
+        ],
+        [
             'name' => 'user2',
             'description' => 'Lietotājs 2',
             'type' => Option::USER,
+            'required' => true,
+        ],
+        [
+            'name' => 'date2',
+            'description' => 'Datums 2. Formāts: DD.MM (piemēram, 17.02)',
+            'type' => Option::STRING,
             'required' => true,
         ],
     ];
@@ -81,6 +94,31 @@ class SwapCommand extends SlashCommand
     {
         $nicks = [];
         $notifications = [];
+        $timestamps = [];
+
+        try {
+            $timestamp = Carbon::parse($this->value('date1') . '.' . Carbon::now()->year);
+
+            if ($timestamp->isPast()) {
+                $timestamp = $timestamp->addYear();
+            }
+            $timestamps[] = $timestamp;
+
+            $timestamp = Carbon::parse($this->value('date2') . '.' . Carbon::now()->year);
+
+            if ($timestamp->isPast()) {
+                $timestamp = $timestamp->addYear();
+            }
+            $timestamps[] = $timestamp;
+        } catch (\Exception $e) {
+            $interaction->respondWithMessage(
+                $this
+                    ->message()
+                    ->title('Notify Command')
+                    ->content("Failed to parse timestamp")
+                    ->build()
+            );
+        }
 
         $nicks[] = $this->discord()->guilds->first()->members->get('id', $this->value('user1'));
         $nicks[] = $this->discord()->guilds->first()->members->get('id', $this->value('user2'));
@@ -88,10 +126,12 @@ class SwapCommand extends SlashCommand
         $notifications[] = Notification::where([
             ['sent', false],
             ['nick', $nicks[0]],
+            ['notify_at', $timestamps[0]],
         ])->first();
         $notifications[] = Notification::where([
             ['sent', false],
             ['nick', $nicks[1]],
+            ['notify_at', $timestamps[1]],
         ])->first();
 
         if ($notifications[0] && $notifications[1]) {
